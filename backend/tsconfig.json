@@ -31,5 +31,7 @@
 			"@exceptions/*": ["./src/exceptions/*"],
 			"@middlewares/*": ["./src/middlewares/*"]
 		}
-	}
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
