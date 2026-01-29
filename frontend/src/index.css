@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+/* App base styles */
+html,
+body,
+#root {
+	height: 100%;
+}
+
+/* Modern scrollbar */
+.custom-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: #cbd5f5 transparent;
+}
+
+/* Chrome / Edge / Safari */
+.custom-scrollbar::-webkit-scrollbar {
+	width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background-color: #cbd5f5;
+	border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background-color: #94a3b8;
+}
+
+@keyframes shimmer {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+/* Video call container */
+.call-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	gap: 20px;
+}
+
+/* User container */
+.user-video-container {
+	position: relative;
+	width: 300px;
+	height: 300px;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Avatar styling */
+.user-avatar {
+	position: absolute;
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	border: 4px solid white;
+	background-color: #4a5568;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+/* Caller avatar position (top left) */
+.caller .user-avatar {
+	top: 20px;
+	left: 20px;
+}
+
+/* Receiver avatar position (bottom right) */
+.receiver .user-avatar {
+	bottom: 20px;
+	right: 20px;
+}
+
+/* Video stream */
+.video-stream {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	background-color: #1a202c;
+}
+
+/* Call status */
+.call-status {
+	text-align: center;
+	color: white;
+	font-size: 18px;
+	margin-top: 10px;
+}
