@@ -2,6 +2,7 @@ import { IconButton, TextField, Popover, LinearProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import EmojiPicker, {
 	EmojiStyle,
@@ -39,6 +40,13 @@ export const MessageInput: React.FC<Props> = ({ userId, chatId }) => {
 		if (!file) return;
 
 		setSelectedFile(file);
+	};
+
+	const handleRemoveFile = () => {
+		setSelectedFile(null);
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		}
 	};
 
 	const handleSend = useCallback(async () => {
@@ -84,13 +92,36 @@ export const MessageInput: React.FC<Props> = ({ userId, chatId }) => {
 
 	return (
 		<div className='shrink-0 border-t bg-gray-50 px-4 py-3'>
-			<div className='flex flex-col gap-1 rounded-2xl bg-white px-3 py-2 shadow-sm'>
+			<div className='flex flex-col gap-2 rounded-2xl bg-white px-3 py-2 shadow-sm'>
 				{uploading && <LinearProgress variant='determinate' value={progress} />}
+
+				{/* Selected file preview with remove button */}
+				{selectedFile && (
+					<div className='flex items-center justify-between bg-blue-50 rounded-lg px-3 py-2'>
+						<div className='flex items-center gap-2'>
+							<span className='text-blue-600'>📎</span>
+							<span className='text-sm text-gray-700 truncate max-w-50'>
+								{selectedFile.name}
+							</span>
+							<span className='text-xs text-gray-500'>
+								{(selectedFile.size / 1024).toFixed(1)} KB
+							</span>
+						</div>
+						<IconButton
+							size='small'
+							onClick={handleRemoveFile}
+							className='text-gray-500 hover:text-red-500'
+						>
+							<CloseIcon fontSize='small' />
+						</IconButton>
+					</div>
+				)}
 
 				<div className='flex items-center gap-2'>
 					<IconButton
 						size='small'
 						onClick={() => fileInputRef.current?.click()}
+						className='text-gray-600'
 					>
 						<AttachFileIcon fontSize='small' />
 					</IconButton>
@@ -106,6 +137,7 @@ export const MessageInput: React.FC<Props> = ({ userId, chatId }) => {
 						size='small'
 						ref={emojiBtnRef}
 						onClick={() => setShowEmoji((v) => !v)}
+						className='text-gray-600'
 					>
 						<EmojiEmotionsOutlinedIcon fontSize='small' />
 					</IconButton>
@@ -150,16 +182,11 @@ export const MessageInput: React.FC<Props> = ({ userId, chatId }) => {
 						color='primary'
 						disabled={uploading || (!message.trim() && !selectedFile)}
 						onClick={handleSend}
+						className='bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500'
 					>
 						<SendIcon />
 					</IconButton>
 				</div>
-
-				{selectedFile && (
-					<div className='text-xs text-gray-600 pl-2'>
-						📎 {selectedFile.name}
-					</div>
-				)}
 			</div>
 		</div>
 	);
