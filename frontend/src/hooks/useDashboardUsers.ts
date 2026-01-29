@@ -36,7 +36,7 @@ export const useDashboardUsers = () => {
 			loadingRef.current = false;
 			setIsLoading(false);
 		}
-	}, [page]);
+	}, [page, hasMore]);
 
 	return {
 		users,
