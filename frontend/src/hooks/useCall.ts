@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSocket } from '@/providers/SocketProvider';
 import { SocketEvent } from '@/constants/socket.events';
+import { audioService } from '@/utils/audioService';
 
 type CallType = 'audio' | 'video';
 type CallState = 'idle' | 'calling' | 'connecting' | 'connected';
@@ -100,6 +101,21 @@ export const useCall = (_selfUserId: string) => {
 		}
 	}, [isScreenSharing]);
 
+	// Add this function to play ringtone
+	const playCallRingtone = useCallback(
+		(type: 'incoming' | 'outgoing') => {
+			if (!callId) return;
+
+			audioService.playRingtone(callId, type);
+		},
+		[callId],
+	);
+
+	// Add this function to stop ringtone
+	const stopCallRingtone = useCallback(() => {
+		audioService.stopRingtone();
+	}, []);
+
 	const toggleAudio = useCallback(() => {
 		const stream = localStreamRef.current;
 		if (!stream) return;
@@ -143,6 +159,8 @@ export const useCall = (_selfUserId: string) => {
 		if (!callId) return;
 
 		try {
+			// Stop ringtone when call is accepted
+			audioService.stopRingtone();
 			const stream = await initializeLocalStream();
 			const pc = getPeerConnection();
 			attachLocalTracks(pc, stream);
@@ -191,6 +209,8 @@ export const useCall = (_selfUserId: string) => {
 	}, []);
 
 	const endCall = useCallback(() => {
+		// Stop ringtone when call ends
+		audioService.stopRingtone();
 		if (callId) {
 			socket.emit(SocketEvent.CALL_END, { callId });
 		}
@@ -229,9 +249,14 @@ export const useCall = (_selfUserId: string) => {
 				peerId: data.peerId,
 			});
 			setCallState('calling');
+			// Play incoming ringtone
+			audioService.playRingtone(data.callId, 'incoming');
 		};
 
 		const handleCallAnswered = async ({ data }: any) => {
+			// Stop ringtone when call is accepted
+			audioService.stopRingtone();
+			console.log('ANSWERED');
 			setCallState('connected');
 
 			try {
@@ -260,6 +285,7 @@ export const useCall = (_selfUserId: string) => {
 			setCallId(data.callId);
 			setCallState('connecting');
 			setIncoming(data.isIncoming || false);
+			audioService.playRingtone(data.callId, 'outgoing');
 		};
 
 		const handleWebRTCOffer = async ({ data }: any) => {
@@ -326,6 +352,7 @@ export const useCall = (_selfUserId: string) => {
 		};
 
 		const handleCallEnd = () => {
+			audioService.stopRingtone();
 			clearAll();
 		};
 
@@ -378,5 +405,7 @@ export const useCall = (_selfUserId: string) => {
 		isScreenSharing,
 		toggleSpeaker,
 		toggleScreenShare,
+		playCallRingtone,
+		stopCallRingtone,
 	};
 };
