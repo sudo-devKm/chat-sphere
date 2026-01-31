@@ -6,12 +6,11 @@ import {
 	Stack,
 	Typography,
 	Container,
-	useTheme,
 	useScrollTrigger,
 	Slide,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
-import { MessageCircle, Zap } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface HideOnScrollProps {
@@ -29,7 +28,6 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 }
 
 export const Navbar: React.FC = () => {
-	const theme = useTheme();
 	const [scrolled, setScrolled] = useState(false);
 
 	useEffect(() => {
