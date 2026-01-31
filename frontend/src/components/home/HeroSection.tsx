@@ -153,7 +153,7 @@ const HeroContent = () => {
 				<CtaButton to='/register' withArrow>
 					Start Free Trial
 				</CtaButton>
-				<CtaButton
+				{/* <CtaButton
 					to='/demo'
 					variant='outlined'
 					sx={{
@@ -172,7 +172,7 @@ const HeroContent = () => {
 						<Video style={{ width: '20px', height: '20px' }} />
 					</Box>
 					Watch Demo
-				</CtaButton>
+				</CtaButton> */}
 			</Stack>
 
 			{/* Trust Indicators */}

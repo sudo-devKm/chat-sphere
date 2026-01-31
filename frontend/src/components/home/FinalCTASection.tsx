@@ -59,7 +59,7 @@ export const FinalCTASection = () => {
 					>
 						Get Started Free
 					</CtaButton>
-					<CtaButton
+					{/* <CtaButton
 						to='/contact'
 						variant='outlined'
 						sx={{
@@ -72,7 +72,7 @@ export const FinalCTASection = () => {
 						}}
 					>
 						Contact Sales
-					</CtaButton>
+					</CtaButton> */}
 				</Stack>
 
 				<Stack
