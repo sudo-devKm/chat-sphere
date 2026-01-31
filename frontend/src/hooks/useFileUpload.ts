@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { uploadFile, type UploadedFile } from '@/api/file/file.api';
-import { toastError } from '@/utils/toast';
+import { toastError } from '@/components/toaster/Toast';
 
 type UseFileUploadOptions = {
 	chatId: string;

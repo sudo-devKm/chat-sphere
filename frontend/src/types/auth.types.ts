@@ -27,4 +27,5 @@ export interface UserResponse {
 	username: string;
 	avatar?: string;
 	status: string;
+	lastSeen?: string;
 }

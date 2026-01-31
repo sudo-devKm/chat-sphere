@@ -1,3 +1,4 @@
+// src/pages/DashboardPage.tsx
 import { DashboardNavbar } from '@/components/dashboard/DashboardNavbar';
 import { VirtualizedUsersList } from '@/components/users-list/VirtualizedUsersList';
 import { useDashboardPresence } from '@/hooks/useDashboardPresence';
@@ -9,6 +10,24 @@ import { useCall } from '@/hooks/useCall';
 import { useAuthStore } from '@/store/auth.store';
 import { CallModal } from '@/components/call/CallModal';
 import { useChatSession } from '@/hooks/useChatSession';
+import {
+	Box,
+	Typography,
+	Paper,
+	Badge,
+	IconButton,
+	Stack,
+	InputAdornment,
+	TextField,
+} from '@mui/material';
+import {
+	Search,
+	Filter,
+	Users,
+	MessageSquare,
+	Phone,
+	Video,
+} from 'lucide-react';
 
 export const DashboardPage = () => {
 	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -17,6 +36,7 @@ export const DashboardPage = () => {
 	const { users, loadMore, order, isLoading, setPage } = useDashboardUsers();
 	const { chatId, loading } = useChatSession(selectedUserId ?? '');
 	const [callStartTime, setCallStartTime] = useState<Date>();
+	const [searchQuery, setSearchQuery] = useState('');
 
 	const {
 		callState,
@@ -88,8 +108,18 @@ export const DashboardPage = () => {
 		: undefined;
 	const peerName = peerInfo?.peerName || 'Unknown';
 
+	// Calculate online users count
+	const onlineCount = onlineIds.size;
+
 	return (
-		<div className='h-screen flex flex-col bg-gray-100 overflow-hidden'>
+		<Box
+			sx={{
+				height: '100vh',
+				display: 'flex',
+				flexDirection: 'column',
+				bgcolor: 'background.default',
+			}}
+		>
 			{/* UNIFIED CALL MODAL */}
 			<CallModal
 				open={isCallActive}
@@ -117,14 +147,88 @@ export const DashboardPage = () => {
 			/>
 
 			<DashboardNavbar />
-			<div className='flex flex-1 min-h-0 overflow-hidden'>
-				{/* USERS SIDEBAR */}
-				<aside className='w-80 bg-white border-r flex flex-col min-h-0 overflow-hidden'>
-					<div className='px-4 py-3 border-b shrink-0'>
-						<h2 className='text-lg font-semibold'>Users</h2>
-					</div>
 
-					<div className='flex-1 min-h-0 overflow-y-auto'>
+			<Box sx={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
+				{/* USERS SIDEBAR */}
+				<Paper
+					elevation={0}
+					sx={{
+						width: { xs: 280, md: 320 },
+						display: 'flex',
+						flexDirection: 'column',
+						borderRight: '1px solid',
+						borderColor: 'divider',
+						bgcolor: 'background.paper',
+						borderRadius: 0,
+					}}
+				>
+					{/* Sidebar Header */}
+					<Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+						<Stack
+							direction='row'
+							justifyContent='space-between'
+							alignItems='center'
+							sx={{ mb: 2 }}
+						>
+							<Typography
+								variant='h6'
+								sx={{
+									fontWeight: 600,
+									display: 'flex',
+									alignItems: 'center',
+									gap: 1,
+								}}
+							>
+								<Users size={20} />
+								Users
+							</Typography>
+							<Badge
+								badgeContent={onlineCount}
+								color='success'
+								sx={{ '& .MuiBadge-badge': { fontSize: '0.75rem' } }}
+							/>
+						</Stack>
+
+						{/* Search Bar */}
+						<TextField
+							fullWidth
+							size='small'
+							placeholder='Search users...'
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position='start'>
+											<Search size={18} color='action' />
+										</InputAdornment>
+									),
+									endAdornment: searchQuery && (
+										<InputAdornment position='end'>
+											<IconButton
+												size='small'
+												onClick={() => setSearchQuery('')}
+											>
+												<Filter size={16} />
+											</IconButton>
+										</InputAdornment>
+									),
+								},
+							}}
+							sx={{
+								'& .MuiOutlinedInput-root': {
+									borderRadius: 2,
+									bgcolor: 'grey.50',
+									'&:hover': {
+										bgcolor: 'grey.100',
+									},
+								},
+							}}
+						/>
+					</Box>
+
+					{/* Users List */}
+					<Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
 						{isLoading ? (
 							<UsersLoader />
 						) : (
@@ -137,11 +241,39 @@ export const DashboardPage = () => {
 								selectedUserId={selectedUserId}
 							/>
 						)}
-					</div>
-				</aside>
+					</Box>
 
-				{/* CHAT */}
-				<main className='flex-1 bg-gray-50 min-h-0 overflow-hidden'>
+					{/* Sidebar Footer */}
+					<Box
+						sx={{
+							p: 2,
+							borderTop: '1px solid',
+							borderColor: 'divider',
+							bgcolor: 'grey.50',
+						}}
+					>
+						<Typography
+							variant='caption'
+							sx={{
+								color: 'text.secondary',
+								display: 'block',
+								textAlign: 'center',
+							}}
+						>
+							{onlineCount} online • {order.length} total users
+						</Typography>
+					</Box>
+				</Paper>
+
+				{/* CHAT AREA */}
+				<Box
+					sx={{
+						flex: 1,
+						display: 'flex',
+						flexDirection: 'column',
+						minHeight: 0,
+					}}
+				>
 					{selectedUserId ? (
 						<ChatContainer
 							loading={loading}
@@ -154,12 +286,93 @@ export const DashboardPage = () => {
 							disableCalls={isCallActive}
 						/>
 					) : (
-						<div className='h-full flex items-center justify-center text-gray-500'>
-							Select a user to start chatting
-						</div>
+						<Box
+							sx={{
+								flex: 1,
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								p: 3,
+								textAlign: 'center',
+							}}
+						>
+							<Box
+								sx={{
+									width: 120,
+									height: 120,
+									borderRadius: '50%',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									bgcolor: 'primary.50',
+									mb: 3,
+								}}
+							>
+								<MessageSquare size={48} style={{ color: '#6366F1' }} />
+							</Box>
+							<Typography
+								variant='h5'
+								sx={{ fontWeight: 600, mb: 1, color: 'text.primary' }}
+							>
+								Welcome to ChatSphere
+							</Typography>
+							<Typography
+								variant='body1'
+								sx={{ color: 'text.secondary', maxWidth: 400, mb: 3 }}
+							>
+								Select a user from the sidebar to start a conversation
+							</Typography>
+							<Stack direction='row' spacing={1}>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'center',
+										p: 2,
+										borderRadius: 2,
+										bgcolor: 'grey.50',
+										minWidth: 100,
+									}}
+								>
+									<Phone
+										size={24}
+										style={{ color: '#10B981', marginBottom: 8 }}
+									/>
+									<Typography
+										variant='caption'
+										sx={{ color: 'text.secondary' }}
+									>
+										Audio Call
+									</Typography>
+								</Box>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'center',
+										p: 2,
+										borderRadius: 2,
+										bgcolor: 'grey.50',
+										minWidth: 100,
+									}}
+								>
+									<Video
+										size={24}
+										style={{ color: '#3B82F6', marginBottom: 8 }}
+									/>
+									<Typography
+										variant='caption'
+										sx={{ color: 'text.secondary' }}
+									>
+										Video Call
+									</Typography>
+								</Box>
+							</Stack>
+						</Box>
 					)}
-				</main>
-			</div>
-		</div>
+				</Box>
+			</Box>
+		</Box>
 	);
 };

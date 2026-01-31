@@ -1,8 +1,8 @@
 import { ChatHeader } from './ChatHeader';
 import type { UserResponse } from '@/types/auth.types';
 import type { CallType } from '@/types/call.types';
-import { MessageList } from './MessageList';
-import { MessageInput } from './MessageInput';
+import { MessageList } from './message-list/MessageList';
+import { MessageInput } from './message-input/MessageInput';
 import { CircularProgress } from '@mui/material';
 
 interface ChatContainerProps {

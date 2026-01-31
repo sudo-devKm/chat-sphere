@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { register as apiRegister, me } from '@/api/auth/auth.api';
 import { useAuthStore } from '@/store/auth.store';
 import type { RegisterPayload } from '@/types/auth.types';
-import { toastSuccess, toastError } from '@/utils/toast';
+import { toastSuccess, toastError } from '@/components/toaster/Toast';
+import axios from 'axios';
 
 export const useRegister = () => {
 	const [error, setError] = useState<string | null>(null);
@@ -17,8 +18,12 @@ export const useRegister = () => {
 			toastSuccess('User registered successfully');
 			return true;
 		} catch (err: any) {
-			setError(err?.message);
-			toastError(err?.message);
+			const errorMessage =
+				(axios.isAxiosError(err)
+					? err?.response?.data.message
+					: err?.message) ?? 'Something Went wrong!';
+			setError(errorMessage);
+			toastError(errorMessage);
 			return false;
 		} finally {
 			setLoading(false);
