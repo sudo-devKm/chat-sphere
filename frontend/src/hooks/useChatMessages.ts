@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SocketEvent } from '@/constants/socket.events';
-import { useSocket } from '@/providers/SocketProvider';
+import { useSocket } from '@/providers/SocketContext';
 import { getMessages } from '@/api/chat/chat.api';
 
 const PAGE_SIZE = 20;

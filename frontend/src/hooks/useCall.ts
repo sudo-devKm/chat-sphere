@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSocket } from '@/providers/SocketProvider';
+import { useSocket } from '@/providers/SocketContext';
 import { SocketEvent } from '@/constants/socket.events';
 import { audioService } from '@/utils/audioService';
 
@@ -34,7 +34,7 @@ export const useCall = (_selfUserId: string) => {
 	// Get call direction based on incoming state
 	const callDirection: CallDirection = incoming ? 'incoming' : 'outgoing';
 
-	const getPeerConnection = () => {
+	const getPeerConnection = useCallback(() => {
 		if (pcRef.current) return pcRef.current;
 
 		const pc = new RTCPeerConnection({
@@ -76,7 +76,7 @@ export const useCall = (_selfUserId: string) => {
 
 		pcRef.current = pc;
 		return pc;
-	};
+	}, [callId, socket]);
 
 	const toggleSpeaker = useCallback(() => {
 		setIsSpeakerOff((prev) => !prev);
@@ -155,24 +155,6 @@ export const useCall = (_selfUserId: string) => {
 		[socket],
 	);
 
-	const acceptCall = useCallback(async () => {
-		if (!callId) return;
-
-		try {
-			// Stop ringtone when call is accepted
-			audioService.stopRingtone();
-			const stream = await initializeLocalStream();
-			const pc = getPeerConnection();
-			attachLocalTracks(pc, stream);
-
-			socket.emit(SocketEvent.CALL_ANSWER, { callId });
-			setCallState('connected');
-		} catch (error) {
-			console.error('Failed to accept call:', error);
-			endCall();
-		}
-	}, [callId, socket]);
-
 	const attachLocalTracks = (pc: RTCPeerConnection, stream: MediaStream) => {
 		const senders = pc.getSenders();
 
@@ -237,6 +219,24 @@ export const useCall = (_selfUserId: string) => {
 
 		return stream;
 	}, [callType]);
+
+	const acceptCall = useCallback(async () => {
+		if (!callId) return;
+
+		try {
+			// Stop ringtone when call is accepted
+			audioService.stopRingtone();
+			const stream = await initializeLocalStream();
+			const pc = getPeerConnection();
+			attachLocalTracks(pc, stream);
+
+			socket.emit(SocketEvent.CALL_ANSWER, { callId });
+			setCallState('connected');
+		} catch (error) {
+			console.error('Failed to accept call:', error);
+			endCall();
+		}
+	}, [callId, socket, initializeLocalStream, getPeerConnection, endCall]);
 
 	useEffect(() => {
 		const handleCallIncoming = ({ data }: any) => {

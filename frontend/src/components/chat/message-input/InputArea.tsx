@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TextField, IconButton, Box } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
@@ -32,6 +33,11 @@ export const InputArea = ({
 	fileInputRef,
 }: InputAreaProps) => {
 	const isSendDisabled = uploading || (!message.trim() && !selectedFile);
+	// Track the emoji button DOM node in state (set via the ref callback
+	// below) instead of reading emojiBtnRef.current during render.
+	const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
+		null,
+	);
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -64,7 +70,10 @@ export const InputArea = ({
 			{/* Emoji Button */}
 			<IconButton
 				size='medium'
-				ref={emojiBtnRef}
+				ref={(node) => {
+					emojiBtnRef.current = node;
+					setEmojiAnchor(node);
+				}}
 				onClick={() => setShowEmoji(!showEmoji)}
 				className='bg-white text-gray-600 hover:bg-gray-100 border border-gray-200 shadow-sm'
 				sx={{
@@ -81,7 +90,7 @@ export const InputArea = ({
 
 			<EmojiPickerPopover
 				open={showEmoji}
-				anchorEl={emojiBtnRef.current}
+				anchorEl={emojiAnchor}
 				onClose={() => setShowEmoji(false)}
 				onEmojiClick={onEmojiClick}
 			/>

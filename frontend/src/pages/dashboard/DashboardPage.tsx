@@ -32,7 +32,7 @@ import {
 export const DashboardPage = () => {
 	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 	const [onlineIds, setOnlineIds] = useState<Set<string>>(new Set());
-	const selfUserId = useAuthStore((s) => s.user?._id!);
+	const selfUserId = useAuthStore((s) => s.user!._id);
 	const { users, loadMore, order, isLoading, setPage } = useDashboardUsers();
 	const { chatId, loading } = useChatSession(selectedUserId ?? '');
 	const [callStartTime, setCallStartTime] = useState<Date>();
@@ -62,14 +62,17 @@ export const DashboardPage = () => {
 		loadMore();
 	}, [loadMore]);
 
-	// Track when call becomes active
-	useEffect(() => {
+	// Track when call becomes active. Derived from callState during render
+	// (rather than an effect) since callStartTime only depends on callState.
+	const [prevCallState, setPrevCallState] = useState(callState);
+	if (callState !== prevCallState) {
+		setPrevCallState(callState);
 		if (callState === 'connected' && !callStartTime) {
 			setCallStartTime(new Date());
 		} else if (callState !== 'connected') {
 			setCallStartTime(undefined);
 		}
-	}, [callState, callStartTime]);
+	}
 
 	const handleStartCall = useCallback(
 		(type: 'audio' | 'video') => {

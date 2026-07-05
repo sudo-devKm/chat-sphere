@@ -18,7 +18,6 @@ export const CallTimer: React.FC<CallTimerProps> = ({
 
 	useEffect(() => {
 		if (!startTime) {
-			setDuration(0);
 			return;
 		}
 
@@ -43,7 +42,7 @@ export const CallTimer: React.FC<CallTimerProps> = ({
 		<div className={`flex items-center gap-2 ${className}`}>
 			{showIcon && <AccessTimeIcon className='w-4 h-4 text-gray-400' />}
 			<Typography variant='caption' className='font-mono text-gray-400'>
-				{formatTime(duration)}
+				{formatTime(startTime ? duration : 0)}
 			</Typography>
 		</div>
 	);

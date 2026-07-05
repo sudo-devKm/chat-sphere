@@ -5,10 +5,16 @@ export function useChatSession(userId: string) {
 	const [chatId, setChatId] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
+	// Flip into the loading state as soon as userId changes, during render
+	// rather than inside the effect below.
+	const [prevUserId, setPrevUserId] = useState(userId);
+	if (userId !== prevUserId) {
+		setPrevUserId(userId);
+		if (userId) setLoading(true);
+	}
+
 	useEffect(() => {
 		if (!userId) return;
-
-		setLoading(true);
 
 		getChatWithUser(userId)
 			.then((res) => {

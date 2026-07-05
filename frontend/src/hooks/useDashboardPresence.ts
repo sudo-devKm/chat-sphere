@@ -1,4 +1,4 @@
-import { useSocket } from '@/providers/SocketProvider';
+import { useSocket } from '@/providers/SocketContext';
 import type { SocketSuccessResponse } from '@/types/socket.types';
 import { useEffect, useRef } from 'react';
 
@@ -13,7 +13,7 @@ export const useDashboardPresence = (onOnlineIds: (ids: string[]) => void) => {
 		socket.on(
 			'users:online',
 			({ data }: SocketSuccessResponse<{ users: string[] }>) => {
-				onOnlineIds(data?.users!);
+				onOnlineIds(data!.users);
 			},
 		);
 		socket.emit('users:sync');
