@@ -1,5 +1,11 @@
 # Chat Sphere — MERN + WebRTC Chat App
 
+[![CI](https://github.com/sudo-devKm/chat-sphere/actions/workflows/ci.yml/badge.svg)](https://github.com/sudo-devKm/chat-sphere/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://chat-sphere-tawny.vercel.app/)
+
+**[Live Demo →](https://chat-sphere-tawny.vercel.app/)**
+
 A modern chat & WebRTC calling application built with TypeScript:
 
 - Backend: Node.js, Express, Socket.IO, MongoDB, Redis, JWT authentication, S3 integration
@@ -315,7 +321,7 @@ Contributing
 
 License
 
-- This repository does not include an explicit license file. Add a LICENSE (for example MIT) if you want to make the code open source.
+- Licensed under the [MIT License](LICENSE).
 
 ---
 

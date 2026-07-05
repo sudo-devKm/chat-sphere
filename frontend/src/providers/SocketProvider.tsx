@@ -1,35 +1,13 @@
+import { useEffect, useState, type ReactNode } from 'react';
 import { getSocket } from '@/socket/socket';
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useRef,
-	type ReactNode,
-} from 'react';
-
-type SocketType = ReturnType<typeof getSocket>;
-
-const SocketContext = createContext<SocketType | null>(null);
-
-export const useSocket = (): SocketType => {
-	const socket = useContext(SocketContext);
-	if (!socket) {
-		throw new Error('useSocket must be used inside SocketProvider');
-	}
-	return socket;
-};
+import { SocketContext, type SocketType } from './SocketContext';
 
 export const SocketProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	const socketRef = useRef<SocketType | null>(null);
-
-	if (!socketRef.current) {
-		socketRef.current = getSocket();
-	}
+	const [socket] = useState<SocketType>(() => getSocket());
 
 	useEffect(() => {
-		const socket = socketRef.current!;
 		// ---- CONNECT ----
 		socket.connect();
 
@@ -56,11 +34,9 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
 			socket?.off?.('disconnect', onDisconnect);
 			socket?.off?.('connect_error', onConnectError);
 		};
-	}, []);
+	}, [socket]);
 
 	return (
-		<SocketContext.Provider value={socketRef.current}>
-			{children}
-		</SocketContext.Provider>
+		<SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
 	);
 };

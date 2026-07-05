@@ -15,6 +15,9 @@ export const VirtualRowWrapper = ({
 	return (
 		<div
 			data-index={virtualRow.index}
+			// tanstack-virtual's documented API for dynamic row measurement;
+			// this assigns a callback ref, not a render-time ref read.
+			// eslint-disable-next-line react-hooks/refs
 			ref={rowVirtualizer.measureElement}
 			style={{
 				position: 'absolute',

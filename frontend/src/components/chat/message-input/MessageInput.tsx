@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { SocketEvent } from '@/constants/socket.events';
-import { useSocket } from '@/providers/SocketProvider';
+import { useSocket } from '@/providers/SocketContext';
 import { toastError } from '@/components/toaster/Toast';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { InputContainer } from './InputContainer';

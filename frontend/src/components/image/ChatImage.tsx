@@ -39,6 +39,16 @@ export const ChatImage: React.FC<ChatImageProps> = ({
 	const [imageError, setImageError] = useState(false);
 	const [_, setClientDimensions] = useState<ImageDimensions | null>(null);
 
+	// Reset states when the preview URL changes (adjusting state during
+	// render instead of an effect avoids an extra render pass)
+	const [prevPreviewUrl, setPrevPreviewUrl] = useState(previewUrl);
+	if (previewUrl !== prevPreviewUrl) {
+		setPrevPreviewUrl(previewUrl);
+		setImageLoaded(false);
+		setImageError(false);
+		setClientDimensions(null);
+	}
+
 	// Calculate display dimensions based on maxWidth constraint
 	const displayDimensions = useMemo(() => {
 		if (!dimensions) {
@@ -117,13 +127,6 @@ export const ChatImage: React.FC<ChatImageProps> = ({
 		setImageError(true);
 		setImageLoaded(false);
 	};
-
-	// Reset states when URL changes
-	useEffect(() => {
-		setImageLoaded(false);
-		setImageError(false);
-		setClientDimensions(null);
-	}, [previewUrl]);
 
 	// Try to extract dimensions from preview URL if backend dimensions are missing
 	useEffect(() => {
